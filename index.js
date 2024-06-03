@@ -43,10 +43,10 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     await client.connect();
-    const productDB = client.db("computer-shope");
-    const userDB = client.db("userDB");
-    const productsCollection = productDB.collection("products");
-    const userCollection = userDB.collection("userCollection");
+    const computerShope = client.db("computer-shope");
+    const userCollection = computerShope.collection("users");
+    const productsCollection = computerShope.collection("products");
+    // const userDB = client.db("user2");
 
     // product
     // app.post("/products", verifyToken, async (req, res) => {
@@ -69,17 +69,20 @@ async function run() {
       });
       res.send(productsData);
     });
+
     app.patch("/products/:id", verifyToken, async (req, res) => {
       const id = req.params.id;
       const updatedData = req.body;
       const result = await productsCollection.updateOne({ _id: new ObjectId(id) }, { $set: updatedData });
       res.send(result);
     });
+
     app.delete("/products/:id", verifyToken, async (req, res) => {
       const id = req.params.id;
       const result = await productsCollection.deleteOne({ _id: new ObjectId(id) });
       res.send(result);
     });
+
     // user
     app.post("/user", async (req, res) => {
       const user = req.body;
