@@ -46,10 +46,8 @@ async function run() {
     const computerShope = client.db("computer-shope");
     const userCollection = computerShope.collection("users");
     const productsCollection = computerShope.collection("products");
-    // const userDB = client.db("user2");
 
     // product
-    // app.post("/products", verifyToken, async (req, res) => {
     app.post("/products", async (req, res) => {
       const productsData = req.body;
       const result = await productsCollection.insertOne(productsData);
@@ -146,7 +144,7 @@ async function run() {
       res.send(result);
     });
 
-    app.patch("/user/:email", async (req, res) => {
+    app.patch("/user/:email", verifyToken, async (req, res) => {
       const email = req.params.email;
       const userData = req.body;
       const result = await userCollection.updateOne({ email }, { $set: userData }, { upsert: true });
