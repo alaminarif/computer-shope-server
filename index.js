@@ -57,9 +57,42 @@ async function run() {
     });
 
     app.get("/products", async (req, res) => {
-      const productsData = productsCollection.find();
-      const result = await productsData.toArray();
-      res.send(result);
+      const filter = req.query;
+      let query = {};
+
+      if (filter.search) {
+        query = {
+          $or: [
+            {
+              title: {
+                $regex: filter.search,
+                $options: "i",
+              },
+            },
+            {
+              brand: {
+                $regex: filter.search,
+                $options: "i",
+              },
+            },
+            {
+              price: {
+                $regex: filter.search,
+                $options: "i",
+              },
+            },
+          ],
+        };
+      }
+
+      try {
+        const productsData = productsCollection.find(query);
+        const result = await productsData.toArray();
+        res.status(200).json(result);
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "An error occurred while fetching products." });
+      }
     });
 
     app.get("/products/:id", async (req, res) => {
